@@ -1,0 +1,266 @@
+{
+	"info": {
+		"_postman_id": "8cae6b74-424e-420c-a8c9-431e9f96728e",
+		"name": "testtaskcollection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29697650"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\":\"test\",\n    \"password\":\"qwe123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/register",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\":\"test\",\n    \"password\":\"qwe123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/login",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "logout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjM4MDgxMzgsImlhdCI6MTcyMzgwNjMzOCwic3ViIjoiYTIyMWVlMzYtZjEyZS00NDgyLTkzMzQtNDFiZGQzMGNmZjFhIiwidWlwIjoiMTcyLjE4LjAuMTozMzIwNiJ9.LFgiS4fwOWLH6UWY1c9UKe35ojVliKCgKfEyS7wWTfbzZen2z36NNR1WhOZZ_WfU4AQKaeMSfh9-ALjudAo_WA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/logout",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "mongodb dynamictable",
+			"item": [
+				{
+					"name": "create Table",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJleHAiOjE3MzQzNjE3NDMsInVpZCI6NH0.Sg3D4i07Nc0QQFMrKqUQ3KtBkmmO4bqLiGZFNck1FEI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"table_name\": \"test\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/tables",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tables"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add row to table",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJleHAiOjE3MzQzNjE3NDMsInVpZCI6NH0.Sg3D4i07Nc0QQFMrKqUQ3KtBkmmO4bqLiGZFNck1FEI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"obj\": {\n        \"list\" : [\n            {\n                \"param\": \"123\"\n            },\n            {\n                \"username\": 123123\n            },\n            {\n                \"subobj\": {\n                    \"test\": \"test\"\n                }\n            }\n        ]\n    },\n    \"test\": {\n        \"test\": \"test\"\n    },\n\n    \"username\": \"user\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/tables/1/rows",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tables",
+								"1",
+								"rows"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get rows by table_id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJleHAiOjE3MzQzNjE3NDMsInVpZCI6NH0.Sg3D4i07Nc0QQFMrKqUQ3KtBkmmO4bqLiGZFNck1FEI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/tables/1/rows",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tables",
+								"1",
+								"rows"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update row",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJleHAiOjE3MzQzNjE3NDMsInVpZCI6NH0.Sg3D4i07Nc0QQFMrKqUQ3KtBkmmO4bqLiGZFNck1FEI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"test\": {\n        \"test\": \"test\"\n    },\n\n    \"username\": \"new one\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/tables/1/rows/2",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tables",
+								"1",
+								"rows",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete table row",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,67 @@
+services:
+  mongodb:
+    image: mongo:6-jammy
+    container_name: mongodb
+    restart: always
+    networks:
+      - app_network
+    volumes:
+      - mongodb_data:/data/db
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=rootpassword
+
+  postgres:
+    image: postgres:13-alpine
+    container_name: postgres
+    restart: always
+    networks:
+      - app_network
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=adminpassword
+      - POSTGRES_DB=mydb
+
+  redis:
+    image: redis:7.4.1-alpine
+    container_name: redis
+    restart: always
+    networks:
+      - app_network
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+
+  app:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: app
+    networks:
+      - app_network
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongodb
+      - postgres
+      - redis
+    environment:
+      - MONGO_URI=mongodb://root:rootpassword@mongodb:27017
+      - POSTGRES_URI=postgres://admin:adminpassword@postgres:5432/mydb
+      - REDIS_URI=redis://redis:6379
+
+volumes:
+  mongodb_data:
+  postgres_data:
+  redis_data:
+
+networks:
+  app_network:
+    driver: bridge

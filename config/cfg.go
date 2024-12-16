@@ -25,7 +25,8 @@ type Config struct {
 	MongoPassword string
 	MongoDatabase string
 
-	HMACSecret string
+	HMACSecret    string
+	ServerAddress string
 }
 
 func ReadConfig() *Config {
@@ -50,6 +51,7 @@ func ReadConfig() *Config {
 		MongoPassword: os.Getenv("MONGO_PASSWORD"),
 		MongoDatabase: os.Getenv("MONGO_DB"),
 		HMACSecret:    os.Getenv("HMAC_SECRET"),
+		ServerAddress: os.Getenv("SERVER_ADDR"),
 	}
 }
 

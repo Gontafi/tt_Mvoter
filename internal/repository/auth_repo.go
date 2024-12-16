@@ -7,23 +7,28 @@ import (
 )
 
 type AuthRepositoryInterface interface {
-	CreateUser(ctx context.Context, user models.User) error
-	GetUser(ctx context.Context, username string) (models.User, error)
+	CreateUser(ctx context.Context, user models.User) (uint64, error)
+	GetUser(ctx context.Context, username string) (*models.User, error)
 }
 
 type AuthRepository struct {
 	db *pgxpool.Pool
 }
 
-func (r *AuthRepository) CreateUser(ctx context.Context, user models.User) error {
-	query := `INSERT INTO users (username, password) VALUES ($1, $2)`
+func NewAuthRepository(db *pgxpool.Pool) AuthRepositoryInterface {
+	return &AuthRepository{db: db}
+}
 
-	_, err := r.db.Exec(ctx, query, user.Username, user.Password)
+func (r *AuthRepository) CreateUser(ctx context.Context, user models.User) (uint64, error) {
+	query := `INSERT INTO users (username, password) VALUES ($1, $2) RETURNING id`
+
+	var id int64
+	err := r.db.QueryRow(ctx, query, user.Username, user.Password).Scan(&id)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	return nil
+	return uint64(id), nil
 }
 
 func (r *AuthRepository) GetUser(ctx context.Context, username string) (*models.User, error) {

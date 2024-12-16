@@ -12,11 +12,20 @@ import (
 )
 
 type AuthServiceInterface interface {
+	Register(ctx context.Context, user models.User) (uint64, error)
+	Login(ctx context.Context, user models.User) (*string, error)
+	Logout(ctx context.Context, token string, userID string) error
+	saveTokenToRedis(ctx context.Context, token string, userID string) error
+	GetTokenFromRedis(ctx context.Context, token string, userID string) (string, error)
 }
 
 type AuthService struct {
 	repo repository.AuthRepositoryInterface
 	rdb  *redis.Client
+}
+
+func NewAuthService(repo repository.AuthRepositoryInterface, rdb *redis.Client) AuthServiceInterface {
+	return &AuthService{repo: repo, rdb: rdb}
 }
 
 func (s *AuthService) Register(ctx context.Context, user models.User) (uint64, error) {
@@ -25,14 +34,14 @@ func (s *AuthService) Register(ctx context.Context, user models.User) (uint64, e
 		return 0, err
 	}
 
-	user.Username = hashedPassword
+	user.Password = hashedPassword
 
-	err = s.repo.CreateUser(ctx, user)
+	id, err := s.repo.CreateUser(ctx, user)
 	if err != nil {
 		return 0, err
 	}
 
-	return 0, nil
+	return id, nil
 }
 
 func (s *AuthService) Login(ctx context.Context, user models.User) (*string, error) {
@@ -41,7 +50,7 @@ func (s *AuthService) Login(ctx context.Context, user models.User) (*string, err
 		return nil, fmt.Errorf("failed to get user from database: %w", err)
 	}
 
-	if !utils.VerifyPassword(user.Password, userDB.Password) {
+	if !utils.VerifyPassword(userDB.Password, user.Password) {
 		return nil, fmt.Errorf("invalid password for user: %s", user.Username)
 	}
 
@@ -71,7 +80,6 @@ func (s *AuthService) saveTokenToRedis(ctx context.Context, token string, userID
 	ttl := 30 * time.Minute
 
 	key := fmt.Sprintf("auth:%s:%s", token, userID)
-
 	err := s.rdb.Set(ctx, key, token, ttl).Err()
 	if err != nil {
 		return fmt.Errorf("failed to save token to Redis: %w", err)
@@ -82,6 +90,7 @@ func (s *AuthService) saveTokenToRedis(ctx context.Context, token string, userID
 
 func (s *AuthService) GetTokenFromRedis(ctx context.Context, token string, userID string) (string, error) {
 	key := fmt.Sprintf("auth:%s:%s", token, userID)
+
 	token, err := s.rdb.Get(ctx, key).Result()
 	if err == redis.Nil {
 		return "", fmt.Errorf("token not found or expired")
