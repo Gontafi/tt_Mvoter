@@ -124,7 +124,7 @@ func (r *DynamicDataRepository) GetRows(ctx context.Context, tableID int64) ([]m
 	}
 	defer cursor.Close(ctx)
 
-	var rows []models.Row
+	rows := []models.Row{}
 	if err := cursor.All(ctx, &rows); err != nil {
 		return nil, err
 	}
