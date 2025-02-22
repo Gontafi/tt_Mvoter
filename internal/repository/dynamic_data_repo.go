@@ -19,6 +19,7 @@ type DynamicDataRepositoryInterface interface {
 	DeleteRow(ctx context.Context, tableID int64, rowID int64) error
 	GetTable(ctx context.Context, tableID int64) (*models.Table, error)
 	DeleteTable(ctx context.Context, tableID int64) error
+	GetTables(ctx context.Context) ([]models.Table, error)
 }
 
 type DynamicDataRepository struct {
@@ -211,4 +212,19 @@ func (r *DynamicDataRepository) DeleteTable(ctx context.Context, tableID int64) 
 	})
 
 	return err
+}
+
+func (r *DynamicDataRepository) GetTables(ctx context.Context) ([]models.Table, error) {
+	cursor, err := r.tableCollection.Find(ctx, bson.M{})
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	var tables []models.Table
+	if err := cursor.All(ctx, &tables); err != nil {
+		return nil, err
+	}
+
+	return tables, nil
 }

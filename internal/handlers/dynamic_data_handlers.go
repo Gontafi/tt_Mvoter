@@ -19,7 +19,7 @@ func NewDynamicDataHandler(service services.DynamicTableServiceInterface) *Dynam
 
 func (h *DynamicDataHandler) CreateTable(w http.ResponseWriter, r *http.Request) {
 	var request struct {
-		TableName string `json:"table_name"`
+		TableName string `json:"name"`
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -158,4 +158,20 @@ func (h *DynamicDataHandler) DeleteRow(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
+}
+
+func (h *DynamicDataHandler) GetTables(w http.ResponseWriter, r *http.Request) {
+	tables, err := h.service.GetTables(r.Context())
+	if err != nil {
+		utils.SendError(w, "Failed to retrieve tables", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	err = json.NewEncoder(w).Encode(tables)
+	if err != nil {
+		utils.SendError(w, "Failed to retrieve tables", http.StatusInternalServerError)
+		return
+	}
+
 }

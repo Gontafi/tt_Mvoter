@@ -10,9 +10,9 @@ type User struct {
 }
 
 type Table struct {
-	ID        int64     `bson:"_id"`
-	Name      string    `bson:"name"`
-	CreatedAt time.Time `bson:"created_at"`
+	ID        int64     `bson:"_id" json:"id"`
+	Name      string    `bson:"name" json:"name"`
+	CreatedAt time.Time `bson:"created_at" json:"created_at"`
 }
 
 type Row struct {

@@ -12,6 +12,7 @@ type DynamicTableServiceInterface interface {
 	UpdateTableRow(ctx context.Context, tableID int64, rowID int64, data map[string]interface{}) error
 	RemoveTableRow(ctx context.Context, tableID int64, rowID int64) error
 	CreateTable(ctx context.Context, tableName string) (int64, error)
+	GetTables(ctx context.Context) ([]models.Table, error)
 }
 
 type DynamicDataService struct {
@@ -44,4 +45,8 @@ func (service *DynamicDataService) RemoveTableRow(ctx context.Context, tableID i
 
 func (service *DynamicDataService) CreateTable(ctx context.Context, tableName string) (int64, error) {
 	return service.repo.CreateTable(ctx, tableName)
+}
+
+func (service *DynamicDataService) GetTables(ctx context.Context) ([]models.Table, error) {
+	return service.repo.GetTables(ctx)
 }

@@ -28,13 +28,14 @@ func SetupRouter(authService services.AuthServiceInterface, handlers handlers.Ha
 
 	router.Handle("POST /api/register", http.HandlerFunc(handlers.Auth.Register))
 	router.Handle("POST /api/login", http.HandlerFunc(handlers.Auth.Login))
-	router.Handle("POST /api/logout", middleware.AuthMiddleware(authService, http.HandlerFunc(handlers.Auth.Logout)))
+	router.Handle("POST /api/logout", middleware.AuthMiddleware(authService, handlers.Auth.Logout))
 
-	router.Handle("POST /api/tables", middleware.AuthMiddleware(authService, http.HandlerFunc(handlers.DynamicData.CreateTable)))
-	router.Handle("POST /api/tables/{tableID}/rows", middleware.AuthMiddleware(authService, http.HandlerFunc(handlers.DynamicData.CreateRow)))
-	router.Handle("GET /api/tables/{tableID}/rows", middleware.AuthMiddleware(authService, http.HandlerFunc(handlers.DynamicData.GetRows)))
-	router.Handle("PUT /api/tables/{tableID}/rows/{rowID}", middleware.AuthMiddleware(authService, http.HandlerFunc(handlers.DynamicData.UpdateRow)))
-	router.Handle("DELETE /api/tables/{tableID}/rows/{rowID}", middleware.AuthMiddleware(authService, http.HandlerFunc(handlers.DynamicData.DeleteRow)))
+	router.Handle("POST /api/tables", middleware.AuthMiddleware(authService, handlers.DynamicData.CreateTable))
+	router.Handle("GET /api/tables", middleware.AuthMiddleware(authService, handlers.DynamicData.GetTables))
+	router.Handle("POST /api/tables/{tableID}/rows", middleware.AuthMiddleware(authService, handlers.DynamicData.CreateRow))
+	router.Handle("GET /api/tables/{tableID}/rows", middleware.AuthMiddleware(authService, handlers.DynamicData.GetRows))
+	router.Handle("PUT /api/tables/{tableID}/rows/{rowID}", middleware.AuthMiddleware(authService, handlers.DynamicData.UpdateRow))
+	router.Handle("DELETE /api/tables/{tableID}/rows/{rowID}", middleware.AuthMiddleware(authService, handlers.DynamicData.DeleteRow))
 
 	// Wrap the entire router with CORS middleware
 	return corsMiddleware(router)
