@@ -12,14 +12,14 @@ import (
 )
 
 type DynamicDataRepositoryInterface interface {
-	CreateTable(ctx context.Context, name string) (int64, error)
+	CreateTable(ctx context.Context, userID int64, name string) (int64, error)
 	CreateRow(ctx context.Context, tableID int64, data map[string]interface{}) (int64, error)
 	GetRows(ctx context.Context, tableID int64) ([]models.Row, error)
 	UpdateRow(ctx context.Context, tableID int64, rowID int64, data map[string]interface{}) error
 	DeleteRow(ctx context.Context, tableID int64, rowID int64) error
 	GetTable(ctx context.Context, tableID int64) (*models.Table, error)
 	DeleteTable(ctx context.Context, tableID int64) error
-	GetTables(ctx context.Context) ([]models.Table, error)
+	GetTables(ctx context.Context, userID int64) ([]models.Table, error)
 }
 
 type DynamicDataRepository struct {
@@ -62,7 +62,7 @@ func (r *DynamicDataRepository) getNextSequence(ctx context.Context, sequenceNam
 	return counter.Value, nil
 }
 
-func (r *DynamicDataRepository) CreateTable(ctx context.Context, name string) (int64, error) {
+func (r *DynamicDataRepository) CreateTable(ctx context.Context, userID int64, name string) (int64, error) {
 	id, err := r.getNextSequence(ctx, "table_id")
 	if err != nil {
 		return 0, err
@@ -70,6 +70,7 @@ func (r *DynamicDataRepository) CreateTable(ctx context.Context, name string) (i
 
 	table := models.Table{
 		ID:        id,
+		UserID:    userID,
 		Name:      name,
 		CreatedAt: time.Now(),
 	}
@@ -214,8 +215,10 @@ func (r *DynamicDataRepository) DeleteTable(ctx context.Context, tableID int64) 
 	return err
 }
 
-func (r *DynamicDataRepository) GetTables(ctx context.Context) ([]models.Table, error) {
-	cursor, err := r.tableCollection.Find(ctx, bson.M{})
+func (r *DynamicDataRepository) GetTables(ctx context.Context, userID int64) ([]models.Table, error) {
+	filter := bson.M{"user_id": userID}
+
+	cursor, err := r.tableCollection.Find(ctx, filter)
 	if err != nil {
 		return nil, err
 	}

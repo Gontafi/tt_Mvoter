@@ -27,7 +27,12 @@ func (h *DynamicDataHandler) CreateTable(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	tableID, err := h.service.CreateTable(r.Context(), request.TableName)
+	userID := utils.ParseUserIDJWTInHandler(w, r)
+	if userID == 0 {
+		return
+	}
+
+	tableID, err := h.service.CreateTable(r.Context(), userID, request.TableName)
 	if err != nil {
 		utils.SendError(w, "Failed to create table", http.StatusInternalServerError)
 		return
@@ -161,7 +166,12 @@ func (h *DynamicDataHandler) DeleteRow(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *DynamicDataHandler) GetTables(w http.ResponseWriter, r *http.Request) {
-	tables, err := h.service.GetTables(r.Context())
+	userID := utils.ParseUserIDJWTInHandler(w, r)
+	if userID == 0 {
+		return
+	}
+
+	tables, err := h.service.GetTables(r.Context(), userID)
 	if err != nil {
 		utils.SendError(w, "Failed to retrieve tables", http.StatusInternalServerError)
 		return
